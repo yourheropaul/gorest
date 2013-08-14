@@ -27,7 +27,6 @@ package gorest
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -279,6 +278,7 @@ func panicMethNotFound(methFound bool, ep endPointStruct, t reflect.Type, f refl
 //-----------------------------------------------------------------------------------------------------------------
 
 func prepareServe(context *Context, ep endPointStruct) ([]byte, restStatus) {
+
 	servMeta := _manager().getType(ep.parentTypeName)
 
 	//Check Authorization

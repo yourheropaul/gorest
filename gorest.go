@@ -26,6 +26,7 @@
 package gorest
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -191,7 +192,8 @@ func (man *manager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if rec := recover(); rec != nil {
 			log.Println("Internal Server Error: Could not serve page: ", r.Method, url_)
 			log.Println(rec)
-			log.Printf("%s", debug.Stack())
+			w.Header().Add("error-description", fmt.Sprintf("%s", rec))
+
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 	}()
@@ -251,15 +253,14 @@ func (man *manager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		} else {
 			log.Println("Problem with request. Error:", r.Method, state.httpCode, state.reason, "; Request: ", r.URL.RequestURI())
+			w.Header().Add("error-description", state.reason)
 			w.WriteHeader(state.httpCode)
-			w.Write([]byte(state.reason))
 		}
 
 	} else {
 		log.Println("Could not serve page, path not found: ", r.Method, url_)
-		//		println("Could not serve page, path not found: ", r.Method, url_)
+		w.Header().Add("error-description", "The resource in the requested path could not be found.")
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("The resource in the requested path could not be found."))
 	}
 
 }

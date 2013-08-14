@@ -25,10 +25,6 @@
 
 package gorest
 
-import (
-	"fmt"
-)
-
 var authorizers map[string]Authorizer
 
 //Signiture of functions to be used as Authorizers
@@ -36,7 +32,6 @@ type Authorizer func(string, string) (bool, bool, SessionData)
 
 //Registers an Authorizer for the specified realm.
 func RegisterRealmAuthorizer(realm string, auth Authorizer) {
-	fmt.Println(realm)
 	if authorizers == nil {
 		authorizers = make(map[string]Authorizer, 0)
 	}
@@ -49,7 +44,6 @@ func RegisterRealmAuthorizer(realm string, auth Authorizer) {
 //Returns the registred Authorizer for the specified realm.
 func GetAuthorizer(realm string) (a Authorizer) {
 
-	fmt.Println(realm)
 	if authorizers == nil {
 		authorizers = make(map[string]Authorizer, 0)
 	}
