@@ -85,6 +85,8 @@ func (serv RestService) Session() SessionData {
 //Interface to be implemented by any session storage mechanism to be used with authorization.
 type SessionData interface {
 	SessionId() string
+	ListRealms() []string
+	ListRoles(realm string) []string
 }
 
 type Context struct {
@@ -104,6 +106,11 @@ type Context struct {
 //Returns a *http.Request associated with this Context
 func (c *Context) Request() *http.Request {
 	return c.request
+}
+
+//Get the session data
+func (c *Context) SessionData() SessionData {
+	return c.relSessionData
 }
 
 //Facilitates the construction of the response to be sent to the client.
