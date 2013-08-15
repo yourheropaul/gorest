@@ -283,13 +283,20 @@ func prepareServe(context *Context, ep endPointStruct) ([]byte, restStatus) {
 
 	//Check Authorization
 	if servMeta.realm != "" {
+
+		// Store a different status depending on failure reason
+		status := "Request denied, please ensure correct authentication and authorization."
+
 		if context.xsrftoken != "" {
 
 			inRealm, inRole, sess := GetAuthorizer(servMeta.realm)(context.xsrftoken, ep.role)
 			context.relSessionData = sess
+
 			if ep.role != "" {
 				if inRealm && inRole {
 					goto Run
+				} else if inRealm {
+					status = "Request denied, please ensure you have access to the role '" + ep.role + "'"
 				}
 			} else {
 				if inRealm {
@@ -299,7 +306,7 @@ func prepareServe(context *Context, ep endPointStruct) ([]byte, restStatus) {
 
 		}
 
-		return nil, restStatus{403, "Request denied, please ensure correct authentication and authorization."}
+		return nil, restStatus{403, status}
 	}
 
 Run:
