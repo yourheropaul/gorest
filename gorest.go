@@ -214,6 +214,11 @@ func (man *manager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		ctx.queryArgs = queryArgs
 		ctx.xsrftoken = xsrft
 
+		// Look in the headers to see if the authorisation
+		if header_auth := r.Header.Get("Authorization"); ctx.xsrftoken == "" && header_auth != "" {
+			ctx.xsrftoken = header_auth
+		}
+
 		data, state := prepareServe(ctx, ep)
 
 		if state.httpCode == http.StatusOK {
