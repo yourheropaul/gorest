@@ -290,7 +290,9 @@ func prepareServe(context *Context, ep endPointStruct) ([]byte, restStatus) {
 		inRealm, inRole, sess := GetAuthorizer(servMeta.realm)(context.xsrftoken, ep.role)
 		context.relSessionData = sess
 
-		if ep.role != "" {
+		if context.xsrftoken != "" && sess == nil {
+			status = "Request denied, authentication failed"
+		} else if ep.role != "" {
 			if inRealm && inRole {
 				goto Run
 			} else if inRealm {
