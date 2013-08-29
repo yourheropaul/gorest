@@ -32,6 +32,6 @@ func GetErrorHandler(code int) ErrorHandler {
 
 func DefaulErrorHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Default error message")
-	w.Header().Add("error-description", "An unknown error occured.")
-	w.WriteHeader(http.StatusInternalServerError)
+	w.Header().Add("error-description", "Resource not found.")
+	w.WriteHeader(http.StatusNotFound)
 }
