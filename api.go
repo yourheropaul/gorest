@@ -118,6 +118,12 @@ type ResponseBuilder struct {
 	ctx *Context
 }
 
+// Show errors using the error handler
+func (this *ResponseBuilder) DispatchErrorHandler(code int) {
+	eh := GetErrorHandler(code)
+	eh(this.writer(), this.ctx.request)
+}
+
 //Returns the "xsrftoken" token associated with the current request and hence session.
 //This token is either passed vi a URL query parameter "xsrft=1234567" or via a cookie with the name "X-Xsrf-Cookie", 
 //all depending on how your Authoriser is set up.

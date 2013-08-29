@@ -263,11 +263,9 @@ func (man *manager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 
 	} else {
-		log.Println("Could not serve page, path not found: ", r.Method, url_)
-		w.Header().Add("error-description", "The resource in the requested path could not be found.")
-		w.WriteHeader(http.StatusNotFound)
+		eh := GetErrorHandler(http.StatusNotFound)
+		eh(w, r)
 	}
-
 }
 
 func (man *manager) getType(name string) serviceMetaData {
