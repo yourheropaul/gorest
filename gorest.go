@@ -219,6 +219,10 @@ func (man *manager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			ctx.xsrftoken = header_auth
 		}
 
+        if r.Header.Get("Origin") != "" {
+            w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+        }
+
 		data, state := prepareServe(ctx, ep)
 
 		if state.httpCode == http.StatusOK {
