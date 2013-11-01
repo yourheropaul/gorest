@@ -77,6 +77,10 @@ func prepServiceMetaData(root string, tags reflect.StructTag, i interface{}, nam
 		}
 	}
 
+	if tag := tags.Get("description"); tag != "" {
+		md.description = tag
+	}
+
 	md.template = i
 	return *md
 }
