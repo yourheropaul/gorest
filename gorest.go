@@ -69,6 +69,7 @@ type endPointStruct struct {
 	isVariableLength     bool
 	parentTypeName       string
 	methodNumberInParent int
+	methodName           string
 	role                 string
 }
 
