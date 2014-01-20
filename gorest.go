@@ -69,6 +69,7 @@ type endPointStruct struct {
 	isVariableLength     bool
 	parentTypeName       string
 	methodNumberInParent int
+	methodName           string
 	role                 string
 }
 
@@ -87,6 +88,7 @@ type serviceMetaData struct {
 	producesMime string
 	root         string
 	realm        string
+	description  string
 }
 
 var restManager *manager
@@ -219,9 +221,9 @@ func (man *manager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			ctx.xsrftoken = header_auth
 		}
 
-        if r.Header.Get("Origin") != "" {
-            w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
-        }
+		if r.Header.Get("Origin") != "" {
+			w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+		}
 
 		data, state := prepareServe(ctx, ep)
 
