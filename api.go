@@ -87,6 +87,8 @@ type SessionData interface {
 	SessionId() string
 	ListRealms() []string
 	ListRoles(realm string) []string
+	InRealmWithRole(realm string, role string) bool
+	InRealm(realm string) bool
 }
 
 type Context struct {
