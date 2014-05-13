@@ -17,6 +17,12 @@ type Service struct {
 	Endpoints    map[string]EndPointDescription
 }
 
+type ResponseDescription struct {
+	Code          int
+	Message       string
+	ResponseModel string
+}
+
 type EndPointDescription struct {
 	Signature    string
 	RawSignature string
@@ -25,6 +31,7 @@ type EndPointDescription struct {
 	Returns      string
 	PathParams   []EndPointParam
 	QueryParams  []EndPointParam
+	Responses    []ResponseDescription
 }
 
 type EndPointParam struct {
@@ -61,19 +68,20 @@ func GetServiceDescription(root_path string) *ServiceDescription {
 	for _, v := range _manager().serviceTypes {
 
 		// Remove root path from relative path
-		path := "/" + strings.Trim(strings.Replace(v.root, s.RootPath, "", 1), "/")
+		path := strings.Trim(strings.Replace(v.root, s.RootPath, "", 1), "/")
 
 		// Assign to the array
 		s.Services[path] = serviceMetaDataToPublicService(v)
 
 		// Find any associated endpoints
 		for key, ep := range endpoints {
+
 			if index := strings.Index(key, path); index == 0 {
 
 				signature := strings.Replace(key, path, "", 1)
 
 				// Create a new public endpoind description
-				s.Services[path].Endpoints[signature] = endpointMetaDataToPublicEndpoind(ep, signature)
+				s.Services[path].Endpoints[signature] = endpointMetaDataToPublicEndpoint(ep, signature)
 			}
 		}
 	}
@@ -100,7 +108,7 @@ func serviceMetaDataToPublicService(in serviceMetaData) (out Service) {
 	return
 }
 
-func endpointMetaDataToPublicEndpoind(in endPointStruct, sig string) EndPointDescription {
+func endpointMetaDataToPublicEndpoint(in endPointStruct, sig string) EndPointDescription {
 
 	e := EndPointDescription{}
 
@@ -119,20 +127,28 @@ func endpointMetaDataToPublicEndpoind(in endPointStruct, sig string) EndPointDes
 	// Path params
 	if len(in.params) > 0 {
 		for i := 0; i < len(in.params); i++ {
-			e.PathParams = append(e.PathParams, makePublicEnpointParamSet(&e, in.params[i], "path"))
+			e.PathParams = append(e.PathParams, makePublicEndpointParamSet(&e, in.params[i], "path"))
 		}
 	}
 
+	// Store queries
 	if len(in.queryParams) > 0 {
 		for i := 0; i < len(in.queryParams); i++ {
-			e.PathParams = append(e.PathParams, makePublicEnpointParamSet(&e, in.queryParams[i], "query"))
+			e.PathParams = append(e.PathParams, makePublicEndpointParamSet(&e, in.queryParams[i], "query"))
 		}
 	}
+
+	// Create full response objects
+	e.Responses = append(e.Responses, ResponseDescription{
+		200,
+		"Request suceessful",
+		in.outputType,
+	})
 
 	return e
 }
 
-func makePublicEnpointParamSet(e *EndPointDescription, in param, kind string) (out EndPointParam) {
+func makePublicEndpointParamSet(e *EndPointDescription, in param, kind string) (out EndPointParam) {
 
 	// Replace the {name:type} format with {name}
 	e.Signature = strings.Replace(
