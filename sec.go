@@ -28,7 +28,7 @@ package gorest
 var authorizers map[string]Authorizer
 
 //Signiture of functions to be used as Authorizers
-type Authorizer func(string, string) (bool, bool, SessionData)
+type Authorizer func(string, string) (bool, bool, SessionData, error)
 
 //Registers an Authorizer for the specified realm.
 func RegisterRealmAuthorizer(realm string, auth Authorizer) {

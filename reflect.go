@@ -289,10 +289,11 @@ func prepareServe(context *Context, ep endPointStruct) ([]byte, restStatus) {
 		// Store a different status depending on failure reason
 		status := "Request denied, please ensure correct authentication and authorization."
 
-		inRealm, inRole, sess := GetAuthorizer(servMeta.realm)(context.xsrftoken, ep.role)
+		inRealm, inRole, sess, err := GetAuthorizer(servMeta.realm)(context.xsrftoken, ep.role)
 		context.relSessionData = sess
-
-		if context.xsrftoken != "" && sess == nil {
+		if err != nil {
+			status = err.Error()
+		} else if context.xsrftoken != "" && sess == nil {
 			status = "Request denied, authentication failed"
 		} else if ep.role != "" {
 			if inRealm && inRole {
@@ -375,7 +376,7 @@ Run:
 
 		}
 
-		//Query arguments are not compulsory on query, so the caller may ommit them, in which case we send a zero value f its type to the method. 
+		//Query arguments are not compulsory on query, so the caller may ommit them, in which case we send a zero value f its type to the method.
 		//Also they may be sent through in any order.
 		for _, par := range ep.queryParams {
 			dat := ""
