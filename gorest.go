@@ -338,3 +338,8 @@ func getDefaultResponseCode(method string) int {
 
 	return 200
 }
+
+func Reset() {
+	restManager = newManager()
+	handlerInitialised = true
+}
